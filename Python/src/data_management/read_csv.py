@@ -74,7 +74,7 @@ def read_track_csv(arguments):
     df = pandas.read_csv(arguments["input_path"])
 
     # Use groupby to aggregate track info. Less error prone than iterating over the data.
-    grouped = df.groupby([TRACK_ID])
+    grouped = df.groupby([TRACK_ID], sort=False)
     # Efficiently pre-allocate an empty list of sufficient size
     tracks = [None] * grouped.ngroups
     current_track = 0
