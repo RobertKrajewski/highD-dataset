@@ -73,56 +73,40 @@ def read_track_csv(arguments):
     # Read the csv file, convert it into a useful data structure
     df = pandas.read_csv(arguments["input_path"])
 
-    # Declare and initialize the tracks list and some variables
-    tracks = []
-    actual_id = -1
-    track_length = 0
-
-    # Iterate over all rows of the csv because we need to create the bounding boxes for each row
-    for i_row in range(df.shape[0]):
-        i_track_id = df[TRACK_ID][i_row]
-        # Set the first track_id
-        if actual_id == -1:
-            actual_id = i_track_id
-
-        # Create the dictionary for each track. Using mostly vectorized code to be faster and save memory
-        if actual_id != i_track_id:
-            starting_index = int(i_row - track_length)
-            r = list(range(starting_index, i_row))
-            bounding_boxes = np.transpose(np.array([df[X][r].values,
-                                                    df[Y][r].values,
-                                                    df[WIDTH][r].values,
-                                                    df[HEIGHT][r].values]))
-            track = {TRACK_ID: actual_id,
-                     FRAME: df[FRAME][r].values,
-                     BBOX: bounding_boxes,
-                     X_VELOCITY: df[X_VELOCITY][r].values,
-                     Y_VELOCITY: df[Y_VELOCITY][r].values,
-                     X_ACCELERATION: df[X_ACCELERATION][r].values,
-                     Y_ACCELERATION: df[Y_ACCELERATION][r].values,
-                     FRONT_SIGHT_DISTANCE: df[FRONT_SIGHT_DISTANCE][r].values,
-                     BACK_SIGHT_DISTANCE: df[BACK_SIGHT_DISTANCE][r].values,
-                     THW: df[THW][r].values,
-                     TTC: df[TTC][r].values,
-                     DHW: df[DHW][r].values,
-                     PRECEDING_X_VELOCITY: df[PRECEDING_X_VELOCITY][r].values,
-                     PRECEDING_ID: df[PRECEDING_ID][r].values,
-                     FOLLOWING_ID: df[FOLLOWING_ID][r].values,
-                     LEFT_FOLLOWING_ID: df[LEFT_FOLLOWING_ID][r].values,
-                     LEFT_ALONGSIDE_ID: df[LEFT_ALONGSIDE_ID][r].values,
-                     LEFT_PRECEDING_ID: df[LEFT_PRECEDING_ID][r].values,
-                     RIGHT_FOLLOWING_ID: df[RIGHT_FOLLOWING_ID][r].values,
-                     RIGHT_ALONGSIDE_ID: df[RIGHT_ALONGSIDE_ID][r].values,
-                     RIGHT_PRECEDING_ID: df[RIGHT_PRECEDING_ID][r].values,
-                     LANE_ID: df[LANE_ID][r].values
-                     }
-            # Reset the bounding boxes list and set the new track id
-            actual_id = i_track_id
-            track_length = 0
-
-            # Add the new track to the tracks list
-            tracks.append(track)
-        track_length += 1
+    # Use groupby to aggregate track info. Less error prone than iterating over the data.
+    grouped = df.groupby([TRACK_ID], sort=False)
+    # Efficiently pre-allocate an empty list of sufficient size
+    tracks = [None] * grouped.ngroups
+    current_track = 0
+    for group_id, rows in grouped:
+        bounding_boxes = np.transpose(np.array([rows[X].values,
+                                                rows[Y].values,
+                                                rows[WIDTH].values,
+                                                rows[HEIGHT].values]))
+        tracks[current_track] = {TRACK_ID: np.int64(group_id),  # for compatibility, int would be more space efficient
+                                 FRAME: rows[FRAME].values,
+                                 BBOX: bounding_boxes,
+                                 X_VELOCITY: rows[X_VELOCITY].values,
+                                 Y_VELOCITY: rows[Y_VELOCITY].values,
+                                 X_ACCELERATION: rows[X_ACCELERATION].values,
+                                 Y_ACCELERATION: rows[Y_ACCELERATION].values,
+                                 FRONT_SIGHT_DISTANCE: rows[FRONT_SIGHT_DISTANCE].values,
+                                 BACK_SIGHT_DISTANCE: rows[BACK_SIGHT_DISTANCE].values,
+                                 THW: rows[THW].values,
+                                 TTC: rows[TTC].values,
+                                 DHW: rows[DHW].values,
+                                 PRECEDING_X_VELOCITY: rows[PRECEDING_X_VELOCITY].values,
+                                 PRECEDING_ID: rows[PRECEDING_ID].values,
+                                 FOLLOWING_ID: rows[FOLLOWING_ID].values,
+                                 LEFT_FOLLOWING_ID: rows[LEFT_FOLLOWING_ID].values,
+                                 LEFT_ALONGSIDE_ID: rows[LEFT_ALONGSIDE_ID].values,
+                                 LEFT_PRECEDING_ID: rows[LEFT_PRECEDING_ID].values,
+                                 RIGHT_FOLLOWING_ID: rows[RIGHT_FOLLOWING_ID].values,
+                                 RIGHT_ALONGSIDE_ID: rows[RIGHT_ALONGSIDE_ID].values,
+                                 RIGHT_PRECEDING_ID: rows[RIGHT_PRECEDING_ID].values,
+                                 LANE_ID: rows[LANE_ID].values
+                                 }
+        current_track = current_track + 1
     return tracks
 
 
