@@ -243,6 +243,16 @@ function stopButton_Callback(hObject, eventdata, handles)
 
 handles.stop = 1;
 guidata(hObject, handles);
+if handles.backgroundImagePath == ""
+    removingList = plotTracks(handles.highwayAxes, ...
+        handles.tracks, handles.currentFrame, handles, handles.removingList);
+else
+    removingList = plotTracksOnImage(handles.highwayAxes, ...
+        handles.tracks, handles.currentFrame, handles, handles.removingList);
+	xlim([0 size(handles.backgroundImage, 2)]);
+end
+handles.removingList = removingList;
+guidata(hObject, handles);
 
 
 function playRateEdit_Callback(hObject, eventdata, handles)
@@ -365,49 +375,50 @@ framesForTrack = track.initialFrame:1:track.finalFrame;
 currentFrameLine = [currentFrame currentFrame];
 
 % Plot X position
-subplot(3, 1, 1);
+axInfo = subplot(3, 1, 1);
 hold all;
 grid on;
-xPositions = centroids(1:end-1, 1);
-plot(framesForTrack, xPositions);
-line(currentFrameLine, [min(xPositions) max(xPositions)], 'Color', 'r', 'LineStyle', '--');
-xlabel('Frame');
-ylabel('X-Position [m]');
-xlim([track.initialFrame track.finalFrame]);
+xPositions = centroids(1:end, 1);
+plot(axInfo, framesForTrack, xPositions);
+line(axInfo, currentFrameLine, [min(xPositions) max(xPositions)], 'Color', 'r', 'LineStyle', '--');
+xlabel(axInfo, 'Frame');
+ylabel(axInfo, 'X-Position [m]');
+xlim(axInfo, [track.initialFrame track.finalFrame]);
 yLimits = [min(xPositions) max(xPositions)];
 offset = (yLimits(2) - yLimits(1)) * 0.05;
 yLimits =[yLimits(1) - offset, yLimits(2) + offset];
-ylim(yLimits);
-title('X-Position');
+ylim(axInfo, yLimits);
+title(axInfo, 'X-Position');
 
 % Plot Y position
-subplot(3, 1, 2);
+axInfo = subplot(3, 1, 2);
+
 hold all;
 grid on;
-yPositions = centroids(1:end-1, 2);
-plot(framesForTrack, yPositions);
-line(currentFrameLine, [min(yPositions) max(yPositions)], 'Color', 'r', 'LineStyle', '--');
-xlabel('Frame');
-ylabel('Y-Position [m]');
-xlim([track.initialFrame track.finalFrame]);
+yPositions = centroids(1:end, 2);
+plot(axInfo, framesForTrack, yPositions);
+line(axInfo, currentFrameLine, [min(yPositions) max(yPositions)], 'Color', 'r', 'LineStyle', '--');
+xlabel(axInfo, 'Frame');
+ylabel(axInfo, 'Y-Position [m]');
+xlim(axInfo, [track.initialFrame track.finalFrame]);
 yLimits = [min(yPositions) max(yPositions)];
 offset = (yLimits(2) - yLimits(1)) * 0.05;
 yLimits =[yLimits(1) - offset, yLimits(2) + offset];
-ylim(yLimits);
-title('Y-Position');
+ylim(axInfo, yLimits);
+title(axInfo, 'Y-Position');
 
 % Plot Velocity
-subplot(3, 1, 3);
+axInfo = subplot(3, 1, 3);
 hold all;
 grid on;
-velocity = abs(track.xVelocity(1:end-1));
-plot(framesForTrack(1:end-1), velocity(1:end-1));
-line(currentFrameLine, [0 50], 'Color', 'r', 'LineStyle', '--');
-xlabel('Frame');
-ylabel('Velocity [m/s]');
-xlim([track.initialFrame track.finalFrame]);
+velocity = abs(track.xVelocity(1:end));
+plot(axInfo, framesForTrack(1:end), velocity(1:end));
+line(axInfo, currentFrameLine, [0 50], 'Color', 'r', 'LineStyle', '--');
+xlabel(axInfo, 'Frame');
+ylabel(axInfo, 'Velocity [m/s]');
+xlim(axInfo, [track.initialFrame track.finalFrame]);
 yLimits = [min(velocity) max(velocity)];
 offset = (yLimits(2) - yLimits(1)) * 0.05;
 yLimits =[yLimits(1) - offset, yLimits(2) + offset];
-ylim(yLimits);
-title('Velocity');
+ylim(axInfo, yLimits);
+title(axInfo, 'Velocity');
