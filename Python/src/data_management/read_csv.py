@@ -127,8 +127,8 @@ def read_static_info(arguments):
     for i_row in range(df.shape[0]):
         track_id = int(df[TRACK_ID][i_row])
         static_dictionary[track_id] = {TRACK_ID: track_id,
-                                       WIDTH: int(df[WIDTH][i_row]),
-                                       HEIGHT: int(df[HEIGHT][i_row]),
+                                       WIDTH: float(df[WIDTH][i_row]),
+                                       HEIGHT: float(df[HEIGHT][i_row]),
                                        INITIAL_FRAME: int(df[INITIAL_FRAME][i_row]),
                                        FINAL_FRAME: int(df[FINAL_FRAME][i_row]),
                                        NUM_FRAMES: int(df[NUM_FRAMES][i_row]),
