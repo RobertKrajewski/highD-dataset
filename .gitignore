@@ -47,4 +47,5 @@ octave-workspace
 *.pickle
 
 Python/data
+Matlab/data
 # End of https://www.gitignore.io/api/matlab
