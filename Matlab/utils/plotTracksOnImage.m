@@ -25,6 +25,7 @@ for iTrack = 1:size(tracks, 2)
             boundingBox = boundingBox / params.geoParams.meterPerPixel;
             boundingBox = boundingBox / 4;
             velocity = track.xVelocity(currentIndex);
+            trackLane = track.lane(currentIndex);
         catch
            continue 
         end
@@ -65,10 +66,11 @@ for iTrack = 1:size(tracks, 2)
         % Plot the text annotation
         if params.plotTextAnnotation
             velocityKmh = abs(velocity) * 3.6;
-            boundingBoxAnnotationText = sprintf('%s|%.2fkm/h|ID%d', ...
+            boundingBoxAnnotationText = sprintf('%s|%.2fkm/h|ID%d|L-%d', ...
                                                 track.class(1), ...
                                                 velocityKmh, ...
-                                                track.id);
+                                                track.id, ...
+                                                trackLane);
             textAnnotation = text(ax, boundingBox(1),boundingBox(2)-1.5, ...
                                   boundingBoxAnnotationText, 'FontSize',8);        
             textAnnotation.BackgroundColor = [1 1 .3];
