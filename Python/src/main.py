@@ -38,9 +38,11 @@ def create_args():
     parser.add_argument('--plotClass', default=True, type=lambda x: (str(x).lower() == 'true'),
                         help='Optional: decide whether to show the class in the text annotation.')
     parser.add_argument('--plotVelocity', default=True, type=lambda x: (str(x).lower() == 'true'),
-                        help='Optional: decide whether to show the class in the text annotation.')
+                        help='Optional: decide whether to show the vehicle X velocity.')
     parser.add_argument('--plotIDs', default=True, type=lambda x: (str(x).lower() == 'true'),
-                        help='Optional: decide whether to show the class in the text annotation.')
+                        help='Optional: decide whether to show the vehicle ID.')
+    parser.add_argument('--plotLaneId', default=True, type=lambda x: (str(x).lower() == 'true'),
+                        help='Optional: decide whether to show the lane ID assigned to the vehicle.')
 
     # --- I/O settings ---
     parser.add_argument('--save_as_pickle', default=True, type=lambda x: (str(x).lower() == 'true'),

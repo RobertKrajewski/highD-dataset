@@ -201,6 +201,11 @@ class VisualizationPlot(object):
                         if annotation_text != '':
                             annotation_text += '|'
                         annotation_text += "ID{}".format(track_id)
+                    if self.arguments["plotLaneId"]:
+                        if annotation_text:
+                            annotation_text += '|'
+                        current_lane_id = track[LANE_ID][current_index]
+                        annotation_text += "L-{}".format(current_lane_id)
                     # Differentiate between using an empty background image and using the virtual background
                     if self.background_image is not None:
                         target_location = (bounding_box[0], y_position - 1)
