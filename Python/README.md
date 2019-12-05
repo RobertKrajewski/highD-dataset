@@ -30,6 +30,12 @@ highD csv files. You can find the other parameters and their descriptions in the
 reads in the highD data and passes it to the visualization program. The visualization program is an interactive plot that
 is able to display the lanes and the vehicles driving on that lanes. One can interactively switch between frames to see 
 how the tracks of the vehicles evolve over time. 
+
+Check available arguments with command:
+```sh
+python main.py --help
+```
+
 ### read_csv.py
 The "read_csv.py" file contains the methods for reading in the highD data. The first method "read_track_csv"
 reads the information for each tracked vehicle. Every unique track contains information and position of the 
