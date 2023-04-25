@@ -1,6 +1,7 @@
 import os
 import scipy.ndimage
 import matplotlib as mpl
+from matplotlib.pyplot import imread
 
 from data_management.read_csv import *
 
@@ -36,7 +37,7 @@ class VisualizationPlot(object):
         background_image_path = arguments["background_image"]
         if background_image_path is not None and os.path.exists(background_image_path):
             # Plot the image
-            self.background_image = scipy.ndimage.imread(background_image_path)
+            self.background_image = imread(background_image_path)
             self.y_sign = 1
             im = self.background_image[:, :, :]
             self.ax.imshow(im)

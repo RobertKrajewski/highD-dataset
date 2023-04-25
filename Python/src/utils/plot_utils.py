@@ -20,8 +20,7 @@ class DiscreteSlider(Slider):
             self.val = val
             if not self.eventson:
                 return
-            for cid, func in self.observers.items():
-                func(discrete_val)
+            self._observers.process('changed',discrete_val)
 
     def update_val_external(self, val):
         self.set_val(val)
