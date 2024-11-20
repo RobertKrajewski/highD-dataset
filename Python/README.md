@@ -15,6 +15,35 @@ each method is shortly described to maintain easy and correct usage.
     |- main.py
 ```
 
+## Installation and Quick Start
+
+1. Create a new Python environment or select a pre-existing one. 
+   This code is tested with Python 3.12, but is very probably compatible with newer releases of Python.
+
+   a. 
+      If you use Anaconda3, this can be done as follows:
+      ```shell 
+      conda create --name highd-tools312 python=3.12
+      conda activate highd-tools312
+      ```
+   b. 
+         If you use venv, you need to install Python 3.12 (from https://www.python.org/downloads/) locally. 
+         Then you are able to create the environment as follows:
+         ```shell 
+         <your_python_path> -m venv --system-site-packages venv
+         ```
+         For the next steps, you would need to call `venv/bin/python3.12` instead of `python3`. 
+
+2. Install required packages by navigating to the root directory and using
+    ```shell 
+    python3 -m pip install -r requirements.txt
+    ```
+3. To run the visualization tool, navigate to the `src/` directory
+   ```shell
+   cd src
+   ```
+   See below for further explanations.
+
 ## Quickstart
 1) Copy the csv files into the **data** directory in a sub folder 
 3) (Optional) Modify the folder_name (sub folder) and video_name variable in main.py or by changing 
