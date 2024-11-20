@@ -23,7 +23,7 @@ def create_args():
     # --- Settings ---
     parser.add_argument('--visualize', default=True, type=lambda x: (str(x).lower() == 'true'),
                         help='True if you want to visualize the data.')
-    parser.add_argument('--background_image', default="../data/01_highway.jpg", type=str,
+    parser.add_argument('--background_image', default="../data/01_highway.png", type=str,
                         help='Optional: you can specify the correlating background image.')
 
     # --- Visualization settings ---
@@ -43,7 +43,7 @@ def create_args():
                         help='Optional: decide whether to show the class in the text annotation.')
 
     # --- I/O settings ---
-    parser.add_argument('--save_as_pickle', default=True, type=lambda x: (str(x).lower() == 'true'),
+    parser.add_argument('--save_as_pickle', default=False, type=lambda x: (str(x).lower() == 'true'),
                         help='Optional: you can save the tracks as pickle.')
     parsed_arguments = vars(parser.parse_args())
     return parsed_arguments
