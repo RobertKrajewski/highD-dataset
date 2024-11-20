@@ -1,13 +1,12 @@
 import os
-import scipy.ndimage
 import matplotlib as mpl
-
-from data_management.read_csv import *
 
 mpl.rcParams['savefig.dpi'] = 300
 import matplotlib.pyplot as plt
-from matplotlib.widgets import Button
-from utils.plot_utils import DiscreteSlider
+
+from matplotlib.pyplot import imread
+from data_management.read_csv import *
+from matplotlib.widgets import Button, Slider
 
 
 class VisualizationPlot(object):
@@ -17,7 +16,7 @@ class VisualizationPlot(object):
         self.static_info = static_info
         self.meta_dictionary = meta_dictionary
         last_track = self.tracks[len(self.tracks) - 1]
-        self.maximum_frames = self.static_info[last_track[TRACK_ID]][FINAL_FRAME] - 1
+        self.maximum_frames = self.static_info[last_track[TRACK_ID][0]][FINAL_FRAME] - 1
         self.current_frame = 1
         self.changed_button = False
         self.rect_map = {}
@@ -36,7 +35,7 @@ class VisualizationPlot(object):
         background_image_path = arguments["background_image"]
         if background_image_path is not None and os.path.exists(background_image_path):
             # Plot the image
-            self.background_image = scipy.ndimage.imread(background_image_path)
+            self.background_image = imread(background_image_path)
             self.y_sign = 1
             im = self.background_image[:, :, :]
             self.ax.imshow(im)
@@ -60,8 +59,8 @@ class VisualizationPlot(object):
         self.ax_button_next2 = self.fig.add_axes([0.35, 0.035, 0.025, 0.07])  # Next x5 button
 
         # Define the widgets
-        self.frame_slider = DiscreteSlider(self.ax_slider, 'Frame', 1, self.maximum_frames, valinit=self.current_frame,
-                                           valfmt='%s')
+        self.frame_slider = Slider(self.ax_slider, 'Frame', 1, self.maximum_frames,
+                                   valinit=self.current_frame, valfmt='%s', valstep=1)
         self.button_previous2 = Button(self.ax_button_previous2, 'Previous x5')
         self.button_previous = Button(self.ax_button_previous, 'Previous')
         self.button_next = Button(self.ax_button_next, 'Next')
@@ -119,7 +118,7 @@ class VisualizationPlot(object):
     def trigger_update(self):
         self.remove_patches()
         self.update_figure()
-        self.frame_slider.update_val_external(self.current_frame)
+        self.frame_slider.set_val(self.current_frame)
         self.fig.canvas.draw_idle()
 
     def update_figure(self):
@@ -134,7 +133,7 @@ class VisualizationPlot(object):
         plotted_objects = []
         for track in self.tracks:
             # Get the id of the current track
-            track_id = track[TRACK_ID]
+            track_id = track[TRACK_ID][0]
             static_track_information = self.static_info[track_id]
             # Get the initial and final frame of the track and check whether the current chosen frame is within these
             # bounds
@@ -176,12 +175,13 @@ class VisualizationPlot(object):
                     # Differentiate between vehicles that drive on the upper or lower lanes
                     if current_velocity < 0:
                         x_back_position = bounding_box[0] + (bounding_box[2] * 0.2)
-                        triangle_info = np.array([[x_back_position, x_back_position, bounding_box[0]], triangle_y_position])
+                        triangle_info = np.array(
+                            [[x_back_position, x_back_position, bounding_box[0]], triangle_y_position])
                     else:
                         x_back_position = bounding_box[0] + bounding_box[2] - (bounding_box[2] * 0.2)
                         triangle_info = np.array([[x_back_position, x_back_position, bounding_box[0] + bounding_box[2]],
                                                   triangle_y_position])
-                    polygon = plt.Polygon(np.transpose(triangle_info), True, **triangle_style)
+                    polygon = plt.Polygon(np.transpose(triangle_info), **triangle_style)
                     self.ax.add_patch(polygon)
                     plotted_objects.append(polygon)
 
@@ -222,7 +222,8 @@ class VisualizationPlot(object):
                         sign = 1 if self.background_image is not None else self.y_sign
                         # Calculate the centroid of the vehicles by using the bounding box information
                         x_centroid_position = relevant_bounding_boxes[:, 0] + relevant_bounding_boxes[:, 2] / 2
-                        y_centroid_position = (sign * relevant_bounding_boxes[:, 1]) + sign * (relevant_bounding_boxes[:, 3]) / 2
+                        y_centroid_position = (sign * relevant_bounding_boxes[:, 1]) + sign * (
+                            relevant_bounding_boxes[:, 3]) / 2
                         centroids = [x_centroid_position, y_centroid_position]
                         centroids = np.transpose(centroids)
                         # Check track direction
